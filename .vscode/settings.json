@@ -1,4 +1,0 @@
-{
-    "appService.defaultWebAppToDeploy": "/subscriptions/cfe3adbf-451e-43e4-bae4-d5ef962b3c4c/resourceGroups/cloud-demo-rg/providers/Microsoft.Web/sites/cloud-demo-web-app",
-    "appService.deploySubpath": "web/dist/web"
-}
