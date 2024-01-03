@@ -15,6 +15,7 @@ export const databaseProviders = [
         password: process.env.AZURE_POSTGRESQL_PASSWORD,
         database: process.env.AZURE_POSTGRESQL_DATABASE,
         synchronize: true,
+        ssl: process.env.AZURE_POSTGRESQL_SSL == 'true',
         logging: true,
         entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       });
