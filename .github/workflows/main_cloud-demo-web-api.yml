@@ -23,6 +23,7 @@ jobs:
 
       - name: npm install, build, and test
         run: |
+          cd api
           npm install
           npm run build
 
@@ -32,5 +33,5 @@ jobs:
         with:
           app-name: 'cloud-demo-web-api'
           slot-name: 'Production'
-          package: .
+          package: ./api
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4C20DD53D6E14DD78E4E5E15EBF58639 }}
