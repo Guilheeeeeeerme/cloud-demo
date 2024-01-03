@@ -59,8 +59,6 @@ jobs:
           package: nest.zip
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_4C20DD53D6E14DD78E4E5E15EBF58639 }}
 
-          
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v2
-        with:
-          name: node-app
+
+      - name: Delete zip file
+          run: rm nest.zip
