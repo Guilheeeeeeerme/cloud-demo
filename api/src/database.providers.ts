@@ -1,3 +1,4 @@
+import { join } from 'path';
 import { DataSource } from 'typeorm';
 
 require('dotenv').config()
@@ -15,9 +16,7 @@ export const databaseProviders = [
         database: process.env.AZURE_POSTGRESQL_DATABASE,
         synchronize: true,
         logging: true,
-        entities: [
-            __dirname + '/../**/*.entity{.ts,.js}',
-        ]
+        entities: [join(__dirname, '**', '*.entity.{ts,js}')],
       });
 
       return dataSource.initialize();
