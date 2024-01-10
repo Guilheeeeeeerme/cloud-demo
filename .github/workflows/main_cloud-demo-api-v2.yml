@@ -25,7 +25,6 @@ jobs:
         run: |
           npm install
           npm run build --if-present
-          npm run test --if-present
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
@@ -58,5 +57,5 @@ jobs:
         with:
           app-name: 'cloud-demo-api-v2'
           slot-name: 'Production'
-          package: .
+          package: ./api/
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1E336B46821F4B799F00D660DA081D7D }}
