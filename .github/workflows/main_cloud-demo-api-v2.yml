@@ -8,6 +8,10 @@ on:
     branches:
       - main
   workflow_dispatch:
+    
+env:
+  AZURE_WEBAPP_NAME: cloud-demo-api-v2    # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: './api'      # set this to the path to your web app project, defaults to the repository root
 
 jobs:
   build:
@@ -56,7 +60,10 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'cloud-demo-api-v2'
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           slot-name: 'Production'
-          package: ./api/
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1E336B46821F4B799F00D660DA081D7D }}
+  
+  # For more information on GitHub Actions for Azure, refer to https://github.com/Azure/Actions
+  # For more samples to get started with GitHub Action workflows to deploy to Azure, refer to https://github.com/Azure/actions-workflow-samples
