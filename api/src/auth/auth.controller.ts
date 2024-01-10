@@ -3,7 +3,6 @@ import { AuthGuard, Public } from './auth.guard';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
-@UseGuards(AuthGuard)
 export class AuthController {
     constructor(private authService: AuthService) { }
 
