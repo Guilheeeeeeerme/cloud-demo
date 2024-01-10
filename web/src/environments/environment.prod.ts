@@ -1,3 +1,3 @@
 export const environment = {
-    apiUrl: 'https://cloud-demo-wa-api.azurewebsites.net'
+    apiUrl: 'https://cloud-demo-api-v2.azurewebsites.net'
 }
