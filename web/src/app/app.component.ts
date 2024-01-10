@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { clearToken, getToken } from './auth/auth.token';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,14 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'web';
+  get isLoggedIn() { return getToken() != null }
+
+  constructor(private router: Router) {
+
+  }
+
+  logout() {
+    clearToken();
+    this.router.navigate(['/login'])
+  }
 }

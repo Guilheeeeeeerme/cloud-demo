@@ -1,0 +1,10 @@
+<form [formGroup]="loginForm" class="formLogin" (submit)="signIn($event)">
+    <h1>Cloud Demo</h1>
+    <!-- <p>Digite os seus dados de acesso no campo abaixo.</p> -->
+    <label for="text">Username</label>
+    <input formControlName="username" id="username" type="text" placeholder="Username" autofocus="true" />
+    <label for="password">Password</label>
+    <input formControlName="password" id="password" type="password" placeholder="Password" />
+    <!-- <a href="/">Esqueci minha senha</a> -->
+    <input type="submit" value="Sign In" class="btn" [disabled]="!loginForm.valid"/>
+</form>
