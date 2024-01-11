@@ -1,8 +1,41 @@
-# Azure
+# Azure Terraform
 
-## Deploy the web app
+* create `main.tf` as https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#example-usage
+* run `az login`
+    * az-login result on the browser
+    ```
+    You have logged into Microsoft Azure!
+    You can close this window, or we will redirect you to the Azure CLI documentation in 1 minute.
 
-- Create a subscription ```cloud-demo-subscription```
-- Create a resource group ```cloud-demo-rg```
-- Create a Static Web App ```cloud-demo-static-web-app```
-    - Here you can pick a Hosting plan:.. Free: For hobby or personal projects
+    Announcements
+    [Windows only] Azure CLI is collecting feedback on using the Web Account Manager (WAM) broker for the login experience.
+
+    You may opt-in to use WAM by running the following commands:
+
+    az config set core.allow_broker=true
+    az account clear
+    az login
+
+    ```
+    * az-login result on the terminal
+
+    ```json
+    [
+        {
+            "cloudName": "AzureCloud",
+            "homeTenantId": "b8e9****-****-****-****-********8efd",
+            "id": "cfe3****-****-****-****-********3c4c",
+            "isDefault": true,
+            "managedByTenants": [],
+            "name": "cloud-demo-subscription",
+            "state": "Enabled",
+            "tenantId": "b8e920ee-****-****-****-********8efd", // <--- TENANT_ID
+            "user": {
+            "name": "**********@outlook.com",
+            "type": "user"
+            }
+        }
+    ]
+    ```
+
+* Run `az login --tenant TENANT_ID` where `TENANT_ID` is the `tenantId` from the az-login terminal results 
