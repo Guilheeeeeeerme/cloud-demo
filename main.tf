@@ -4,7 +4,7 @@ terraform {
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=3.0.0"
+      version = "3.70.0"
     }
   }
 }
@@ -16,7 +16,7 @@ provider "azurerm" {
 }
 
 # Create a resource group
-resource "azurerm_resource_group" "azure-minimal-spa-rg" {
+resource "azurerm_resource_group" "rg-tf" {
   name     = "azure-minimal-spa-terraform-rg"
   location = "eastus2"
 }
