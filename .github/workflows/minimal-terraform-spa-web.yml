@@ -43,6 +43,11 @@ jobs:
         run: terraform plan -no-color
         continue-on-error: true
 
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -no-color
+        continue-on-error: true
+
         #     - uses: actions/checkout@v3
   #       with:
   #         submodules: true
