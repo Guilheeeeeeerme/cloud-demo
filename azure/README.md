@@ -2,6 +2,7 @@
 
 * create `main.tf`
     * https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#example-usage
+* run `terraform init`
 * run `az login`
     * `az login` expected result on the browser
     ```
