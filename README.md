@@ -42,7 +42,7 @@
 
 * Run `az login --tenant TENANT_ID` where `TENANT_ID` is the `tenantId` from the `az login` terminal result.
 
-* `az ad sp create-for-rbac --name "minimal-terraform-spa-deploy"`
+* `az ad sp create-for-rbac --name "minimal-terraform-spa-deploy" --role contributor --scopes /subscriptions/{subscription-id} --json-auth`
     ```json
     {
         "clientId": "e7d36******",
