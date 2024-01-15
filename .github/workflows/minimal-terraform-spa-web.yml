@@ -50,10 +50,10 @@ jobs:
         run: terraform plan -no-color
         continue-on-error: true
 
-      - name: Terraform Apply
-        id: apply
-        run: terraform apply -no-color
-        continue-on-error: true
+      # - name: Terraform Apply
+      #   id: apply
+      #   run: terraform apply -no-color
+      #   continue-on-error: true
       
       - uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
