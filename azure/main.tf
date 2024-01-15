@@ -19,7 +19,7 @@ provider "azurerm" {
 }
 
 # Create a resource group
-resource "azurerm_resource_group" "minimal-terraform-spa-rg" {
+resource "azurerm_resource_group" "sample-rg" {
   name     = "minimal-terraform-spa-rg"
   location = "eastus2"
   tags = {
@@ -30,47 +30,39 @@ resource "azurerm_resource_group" "minimal-terraform-spa-rg" {
 }
 
 ##### WEB #####
-resource "azurerm_static_site" "minimal-terraform-spa-web" {
+resource "azurerm_static_site" "sample-web" {
   name                = "minimal-terraform-spa-web"
-  location            = azurerm_resource_group.minimal-terraform-spa-rg.location
-  resource_group_name = azurerm_resource_group.minimal-terraform-spa-rg.name
+  resource_group_name = azurerm_resource_group.sample-rg.name
+  location            = azurerm_resource_group.sample-rg.location
+  tags                = azurerm_resource_group.sample-rg.tags
   sku_tier            = "Free"
   sku_size            = "Free"
-
-  tags = azurerm_resource_group.minimal-terraform-spa-rg.tags
 }
 
 ##### API #####
-resource "azurerm_app_service_plan" "minimal-terraform-spa-api-serviceplan" {
+resource "azurerm_app_service_plan" "sample-api-sp" {
   name                = "minimal-terraform-spa-api-serviceplan"
-  resource_group_name = azurerm_resource_group.minimal-terraform-spa-rg.name
-  location            = azurerm_resource_group.minimal-terraform-spa-rg.location
+  resource_group_name = azurerm_resource_group.sample-rg.name
+  location            = azurerm_resource_group.sample-rg.location
+  tags                = azurerm_resource_group.sample-rg.tags
 
 
   sku {
     tier = "Free" # Free, Basic, Standard, Premium
-    size = "F1" # https://azure.microsoft.com/en-us/pricing/details/app-service/windows/
+    size = "F1"   # https://azure.microsoft.com/en-us/pricing/details/app-service/windows/
   }
 }
 
-resource "azurerm_app_service" "minimal-terraform-spa-api" {
+resource "azurerm_app_service" "sample-api" {
   name                = "minimal-terraform-spa-api"
-  resource_group_name = azurerm_resource_group.minimal-terraform-spa-rg.name
-  location            = azurerm_resource_group.minimal-terraform-spa-rg.location
-  app_service_plan_id = azurerm_app_service_plan.minimal-terraform-spa-api-serviceplan.id
+  resource_group_name = azurerm_resource_group.sample-rg.name
+  location            = azurerm_resource_group.sample-rg.location
+  tags                = azurerm_resource_group.sample-rg.tags
+
+  app_service_plan_id = azurerm_app_service_plan.sample-api-sp.id
 }
 
-# resource "azurerm_app_service_source_control" "cloud_demo_repo" {
-#   app_id   = azurerm_static_site.minimal_web.id
-#   repo_url = "https://github.com/Guilheeeeeeerme/cloud-demo"
-#   branch   = "main"
-# }
-
-# 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
-
-#   source {
-#     branch          = "main"
-#     repo_token      = "xxxxxxxxxx" # Your GitHub Repository Token
-#     repository_url  = "https://github.com/Guilheeeeeeerme/cloud-demo"
-#     output_location = "/location-to-application-outputs"
-#   }
+output "sample-web" {
+  value = azurerm_static_site.sample-web.api_key
+  sensitive = true
+}
