@@ -1,8 +1,9 @@
 # Azure Terraform
 
-* create `main.tf` as https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#example-usage
+* create `main.tf`
+    * https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs#example-usage
 * run `az login`
-    * az-login result on the browser
+    * `az login` expected result on the browser
     ```
     You have logged into Microsoft Azure!
     You can close this window, or we will redirect you to the Azure CLI documentation in 1 minute.
@@ -17,7 +18,7 @@
     az login
 
     ```
-    * az-login result on the terminal
+    * `az login` expected result on the terminal
 
     ```json
     [
@@ -38,4 +39,4 @@
     ]
     ```
 
-* Run `az login --tenant TENANT_ID` where `TENANT_ID` is the `tenantId` from the az-login terminal results 
+* Run `az login --tenant TENANT_ID` where `TENANT_ID` is the `tenantId` from the `az login` terminal result.
