@@ -62,7 +62,7 @@ resource "azurerm_app_service" "sample-api" {
   app_service_plan_id = azurerm_app_service_plan.sample-api-sp.id
 }
 
-output "sample-web" {
+output "sample-web-api-key" {
   value = azurerm_static_site.sample-web.api_key
   sensitive = true
 }

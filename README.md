@@ -41,3 +41,20 @@
     ```
 
 * Run `az login --tenant TENANT_ID` where `TENANT_ID` is the `tenantId` from the `az login` terminal result.
+
+* `az ad sp create-for-rbac --name "minimal-terraform-spa-deploy"`
+    ```json
+    {
+        "clientId": "e7d36******",
+        "clientSecret": ".lC8Q******",
+        "subscriptionId": "cfe3a******",
+        "tenantId": "b8e92******",
+        "activeDirectoryEndpointUrl": "https******",
+        "resourceManagerEndpointUrl": "https******",
+        "activeDirectoryGraphResourceId": "https******",
+        "sqlManagementEndpointUrl": "https******",
+        "galleryEndpointUrl": "https******",
+        "managementEndpointUrl": "https******"
+    }
+    ```
+* add to repository secret as `AZURE_CREDENTIALS`
