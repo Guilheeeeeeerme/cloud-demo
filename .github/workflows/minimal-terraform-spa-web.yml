@@ -35,6 +35,7 @@ jobs:
         id: plan
         run: | 
           terraform plan -no-color
+          echo "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
           echo ${{ steps.plan.outputs.stdout }}
           echo ${{ steps.plan.outputs.stderr }}
           echo ${{ steps.plan.outputs.exitcode }}
