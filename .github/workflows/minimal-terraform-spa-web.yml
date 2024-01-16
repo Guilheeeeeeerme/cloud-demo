@@ -19,37 +19,23 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
-        - name: Log in with Azure
-          uses: azure/login@v1
-          with:
-            creds: ${{ secrets.AZURE_CREDENTIALS }}
-        
-        - uses: actions/checkout@v3
-        - uses: hashicorp/setup-terraform@v3
+      - name: Log in with Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - uses: actions/checkout@v3
+      - uses: hashicorp/setup-terraform@v3
 
-        - name: Terraform fmt
-          id: fmt
-          run: terraform fmt -check
-          continue-on-error: true
-  
-        - name: Terraform Init
-          id: init
-          run: terraform init
-  
-        - name: Terraform Validate
-          id: validate
-          run: terraform validate -no-color
-  
-        - name: Terraform Plan
-          id: plan
-          run: terraform plan -no-color
-          continue-on-error: true
+      - name: Terraform Init
+        id: init
+        run: terraform init
 
-        - run: echo ${{ steps.plan.outputs.stdout }}
-        - run: echo ${{ steps.plan.outputs.stderr }}
-        - run: echo ${{ steps.plan.outputs.exitcode }}
-  
-        # - name: Terraform Apply
-        #   id: apply
-        #   run: terraform apply -no-color
-        #   continue-on-error: true
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
+
+      - run: echo ${{ steps.plan.outputs.stdout }}
+      - run: echo ${{ steps.plan.outputs.stderr }}
+      - run: echo ${{ steps.plan.outputs.exitcode }}
