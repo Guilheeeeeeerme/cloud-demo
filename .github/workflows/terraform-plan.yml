@@ -82,10 +82,6 @@ jobs:
     - name: Show Secret
       id: show-secret
       run: echo ${{ steps.load-secret.outputs.stdout }}
-    
-    - name: Show other Secret
-      id: show-other-secret
-      run: echo ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_KIND_STONE_0609C7A10 }}
 
     - name: Build And Deploy
       id: builddeploy
