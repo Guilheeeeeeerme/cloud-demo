@@ -4,72 +4,82 @@ on:
   push:
     branches: 
       - main
-  # workflow_dispatch:
-  # push:
-  #   branches:
-  #     - main
-  # pull_request:
-  #   types: [opened, synchronize, reopened, closed]
-  #   branches:
-  #     - main
+
+env:
+  ROOT_PATH: '${{github.workspace}}'
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ SECRETS.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ SECRETS.AZURE_TENANT_ID }}
 
 jobs:
-  build_and_deploy_job:
-    name: Build and Deploy Job
-    env: 
-      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      ARM_SUBSCRIPTION_ID: ${{ SECRETS.AZURE_SUBSCRIPTION_ID }}
-      ARM_TENANT_ID: ${{ SECRETS.AZURE_TENANT_ID }}
+  terraform_plan:
+    name: 'terraform plan'
     runs-on: ubuntu-latest
+    environment: production
 
     defaults:
       run:
         shell: bash
-        working-directory: .
-    
-    permissions:
-      contents: read
-      pull-requests: write
 
     steps:
       - name: Checkout 
         uses: actions/checkout@v3
-      
-      - uses: hashicorp/setup-terraform@v3
+
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v3
       
       - name: Terraform Init
-        id: init
         run: terraform init
+        working-directory: ${{ env.ROOT_PATH }}
 
       - name: Terraform Plan
-        id: plan
         run: terraform plan -no-color -input=false
-        continue-on-error: true
+        working-directory: ${{ env.ROOT_PATH }}
+  
+  terraform_apply:
+    name: 'terraform apply'
+    needs: [terraform_plan]
+    runs-on: ubuntu-latest
+    environment: production
+    
+    defaults:
+      run:
+        shell: bash
+        
+    steps:
+    - name: Checkout 
+      uses: actions/checkout@v3
 
-      - name: Terraform Apply
-        id: apply
-        run: terraform apply -auto-approve -input=false
-        continue-on-error: true
+    - name: Setup terraform
+      uses: hashicorp/setup-terraform@v3
       
-      - name: Load Secret
-        id: show-secret
-        run: terraform output sample-web-api-key
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ${{ env.ROOT_PATH }}
 
-      - name: Show Secret
-        run: echo "Secret ${{ steps.show-secret.outputs.stdout }}"
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -input=false
+      working-directory: ${{ env.ROOT_PATH }}
       
-      - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ steps.show-secret.outputs.stdout }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
-          action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/web" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "dist/web" # Built app content directory - optional
-          app_build_command: npm run build:prod
-          ###### End of Repository/Build Configurations ######
+      # - name: Load Secret
+      #   id: show-secret
+      #   run: terraform output sample-web-api-key
+
+      # - name: Show Secret
+      #   run: echo "Secret ${{ steps.show-secret.outputs.stdout }}"
+      
+      # - name: Build And Deploy
+      #   id: builddeploy
+      #   uses: Azure/static-web-apps-deploy@v1
+      #   with:
+      #     azure_static_web_apps_api_token: ${{ steps.show-secret.outputs.stdout }}
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+      #     action: "upload"
+      #     ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+      #     # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+      #     app_location: "/web" # App source code path
+      #     api_location: "" # Api source code path - optional
+      #     output_location: "dist/web" # Built app content directory - optional
+      #     app_build_command: npm run build:prod
+      #     ###### End of Repository/Build Configurations ######
