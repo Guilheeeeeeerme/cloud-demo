@@ -56,8 +56,8 @@ jobs:
         id: show-secret
         run: terraform output sample-web-api-key
 
-      # - name: Show Secret
-      #   run: echo "Secret ${{ steps.show-secret.outputs.stdout }}"
+      - name: Show Secret
+        run: echo "Secret ${{ steps.show-secret.outputs.stdout }}"
       
       - name: Build And Deploy
         id: builddeploy
