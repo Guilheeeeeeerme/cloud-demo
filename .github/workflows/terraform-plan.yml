@@ -15,11 +15,16 @@ on:
 
 jobs:
   build_and_deploy_job:
-    runs-on: ubuntu-latest
     name: Build and Deploy Job
-    permissions:
-      contents: read
-      pull-requests: write
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: .
+    # permissions:
+    #   contents: read
+    #   pull-requests: write
+
     steps:
       - name: Log in with Azure
         uses: azure/login@v1
@@ -35,11 +40,11 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color
+        run: terraform plan -no-color -input=false
 
       - name: Terraform Apply
         id: apply
-        run: TF_LOG=TRACE terraform -auto-approve -input=false
+        run: terraform apply -auto-approve -input=false
       
       - id: show-secret
         run: terraform output sample-web-api-key
