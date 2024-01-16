@@ -39,7 +39,7 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        run: TF_LOG=TRACE terraform apply -no-color
+        run: TF_LOG=TRACE terraform -auto-approve -input=false
       
       - id: show-secret
         run: terraform output sample-web-api-key
