@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     permissions:
+      contents: read
       pull-requests: write
     steps:
       - name: Log in with Azure
@@ -35,19 +36,13 @@ jobs:
       - name: Terraform Plan
         id: plan
         run: terraform plan -no-color
-      
-      - run: echo ${{ steps.plan.outputs.stdout }}
-        continue-on-error: true
-      
-      - run: echo ${{ steps.plan.outputs.stderr }}
-        continue-on-error: true
-      
-      - run: echo ${{ steps.plan.outputs.exitcode }}
-        continue-on-error: true
+
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -no-color
       
       - id: show-secret
         run: terraform output sample-web-api-key
       
       - run: |
-          echo "::add-mask::${{ steps.show-secret.outputs.stdout }}"
           echo "${{ steps.show-secret.outputs.stdout }}"
