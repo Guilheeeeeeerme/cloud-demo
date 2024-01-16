@@ -12,7 +12,7 @@ terraform {
   }
 
   backend "azurerm" {
-    resource_group_name  = "CreedInfrastructureAutomationTest"
+    resource_group_name  = "minimal-terraform-spa-tfstate-rg"
     storage_account_name = "creedminimalspa"
     container_name       = "tfstate"
     key                  = "azure-example"
