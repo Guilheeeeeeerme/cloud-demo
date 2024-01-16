@@ -40,20 +40,19 @@
     ]
     ```
 
-
-* `az account list`
-    * pick the `id` of the subscription you want
-
+* https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret
 
 ```shell
+
+az account list
+# pick the `id` of the subscription you want    
 
 az account set --subscription="20000000-0000-0000-0000-000000000000"
 
 az ad sp create-for-rbac \
-    --name "MinimalTerraformSpaDeploy" \
     --role="Contributor" \
-    --scopes="/subscriptions/20000000-0000-0000-0000-000000000000" \
-    --sdk-auth
+    --scopes="/subscriptions/20000000-0000-0000-0000-000000000000"
+
 ```
 
 * output
