@@ -10,6 +10,13 @@ terraform {
       version = "3.86.0"
     }
   }
+
+  backend "azurerm" {
+    resource_group_name  = "CreedInfrastructureAutomationTest"
+    storage_account_name = "creedminimalspa"
+    container_name       = "tfstate"
+    key                  = "azure-example"
+  }
 }
 
 # Configure the Microsoft Azure Provider
@@ -63,6 +70,6 @@ resource "azurerm_app_service" "sample-api" {
 }
 
 output "sample-web-api-key" {
-  value = azurerm_static_site.sample-web.api_key
+  value     = azurerm_static_site.sample-web.api_key
   sensitive = true
 }
