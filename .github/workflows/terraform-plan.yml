@@ -39,9 +39,7 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        env:
-          TF_LOG: TRACE
-        run: terraform apply -no-color
+        run: TF_LOG=TRACE terraform apply -no-color
       
       - id: show-secret
         run: terraform output sample-web-api-key
