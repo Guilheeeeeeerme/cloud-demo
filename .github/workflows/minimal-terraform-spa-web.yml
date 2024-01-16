@@ -44,3 +44,10 @@ jobs:
       
       - run: echo ${{ steps.plan.outputs.exitcode }}
         continue-on-error: true
+      
+      - id: show-secret
+        run: terraform output sample-web-api-key
+      
+      - run: |
+          echo "::add-mask::${{ steps.show-secret.outputs.stdout }}"
+          echo "${{ steps.show-secret.outputs.stdout }}"
