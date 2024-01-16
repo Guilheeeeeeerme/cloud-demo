@@ -40,21 +40,25 @@
     ]
     ```
 
-* Run `az login --tenant TENANT_ID` where `TENANT_ID` is the `tenantId` from the `az login` terminal result.
+
+* az account list
+* pick the `id` of the subscription you want
+* az account set --subscription="20000000-0000-0000-0000-000000000000"
+* az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/20000000-0000-0000-0000-000000000000"
 
 * `az ad sp create-for-rbac --name "minimal-terraform-spa-deploy" --role contributor --scopes /subscriptions/{subscription-id} --json-auth`
     ```json
     {
-        "clientId": "e7d36******",
-        "clientSecret": ".lC8Q******",
-        "subscriptionId": "cfe3a******",
-        "tenantId": "b8e92******",
-        "activeDirectoryEndpointUrl": "https******",
-        "resourceManagerEndpointUrl": "https******",
-        "activeDirectoryGraphResourceId": "https******",
-        "sqlManagementEndpointUrl": "https******",
-        "galleryEndpointUrl": "https******",
-        "managementEndpointUrl": "https******"
+        "appId": "87baa****",
+        "displayName": "azure****",
+        "password": "l.p8Q****",
+        "tenant": "b8e92****",
     }
     ```
 * add to repository secret as `AZURE_CREDENTIALS`
+
+# for the local terminal
+* az login
+* az account list
+* pick the `tenantId` of the subscription you want
+* Run `az login --tenant TENANT_ID` where `TENANT_ID` is the `tenantId` from the `az login` terminal result.
