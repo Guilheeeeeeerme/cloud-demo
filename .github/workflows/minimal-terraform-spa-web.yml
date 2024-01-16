@@ -36,9 +36,9 @@ jobs:
         run: terraform plan -no-color
         continue-on-error: true
       
-      - uses: actions/github-script@v6
-        with:
-          script: |
+      - name: Echo stuff
+        shell: bash
+        run: |
             echo ${{ steps.plan.outputs.stdout }}
             echo ${{ steps.plan.outputs.stderr }}
             echo ${{ steps.plan.outputs.exitcode }} 
