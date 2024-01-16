@@ -61,13 +61,25 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve -input=false
       working-directory: ${{ env.ROOT_PATH }}
+  
+  build_and_deploy:
+    name: 'build and deploy'
+    needs: [terraform_apply]
+    runs-on: ubuntu-latest
+    environment: production
+    
+    defaults:
+      run:
+        shell: bash
+        
+    steps:
       
-      # - name: Load Secret
-      #   id: show-secret
-      #   run: terraform output sample-web-api-key
+      - name: Load Secret
+        id: show-secret
+        run: terraform output sample-web-api-key
 
-      # - name: Show Secret
-      #   run: echo "Secret ${{ steps.show-secret.outputs.stdout }}"
+      - name: Show Secret
+        run: echo "Secret ${{ steps.show-secret.outputs.stdout }}"
       
       # - name: Build And Deploy
       #   id: builddeploy
