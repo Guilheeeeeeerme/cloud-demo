@@ -80,6 +80,9 @@ jobs:
 
     - name: Show Secret
       run: echo "Secret ${{ steps.show-secret.outputs.stdout }}"
+    
+    - name: Show Secret
+      run: echo "Secret ${{ secrets.GITHUB_TOKEN }}"
       
       # - name: Build And Deploy
       #   id: builddeploy
