@@ -41,18 +41,35 @@
     ```
 
 
-* az account list
-* pick the `id` of the subscription you want
-* az account set --subscription="20000000-0000-0000-0000-000000000000"
-* az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/20000000-0000-0000-0000-000000000000"
+* `az account list`
+    * pick the `id` of the subscription you want
 
-* `az ad sp create-for-rbac --name "minimal-terraform-spa-deploy" --role contributor --scopes /subscriptions/{subscription-id} --json-auth`
+
+```shell
+
+az account set --subscription="20000000-0000-0000-0000-000000000000"
+
+az ad sp create-for-rbac \
+    --name "MinimalTerraformSpaDeploy" \
+    --role="Contributor" \
+    --scopes="/subscriptions/20000000-0000-0000-0000-000000000000" \
+    --sdk-auth
+```
+
+* output
+<!-- * `az ad sp create-for-rbac --name "minimal-terraform-spa-deploy" --role contributor --scopes /subscriptions/{subscription-id} --json-auth` -->
     ```json
     {
-        "appId": "87baa****",
-        "displayName": "azure****",
-        "password": "l.p8Q****",
-        "tenant": "b8e92****",
+        "clientId": "89b4e*****",
+        "clientSecret": "Iq~8Q*****",
+        "subscriptionId": "cfe3a*****",
+        "tenantId": "b8e92*****",
+        "activeDirectoryEndpointUrl": "https*****",
+        "resourceManagerEndpointUrl": "https*****",
+        "activeDirectoryGraphResourceId": "https*****",
+        "sqlManagementEndpointUrl": "https*****",
+        "galleryEndpointUrl": "https*****",
+        "managementEndpointUrl": "https*****"
     }
     ```
 * add to repository secret as `AZURE_CREDENTIALS`
