@@ -83,10 +83,13 @@ jobs:
       id: show-secret
       env:
         DEBUG_PASSWORD: ${{ steps.load-secret.outputs.stdout }}
+      run: echo $DEBUG_PASSWORD 
+
+    - name: Show Secret 2
+      id: show-secret-2
+      env:
         DEBUG_SECRET_KEY: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_KIND_STONE_0609C7A10 }}
-      run: |
-        echo $DEBUG_PASSWORD 
-        echo $DEBUG_SECRET_KEY
+      run: echo $DEBUG_SECRET_KEY
 
     # - name: Build And Deploy
     #   id: builddeploy
