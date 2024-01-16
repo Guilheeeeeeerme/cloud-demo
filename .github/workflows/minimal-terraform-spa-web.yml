@@ -37,5 +37,10 @@ jobs:
         run: terraform plan -no-color
       
       - run: echo ${{ steps.plan.outputs.stdout }}
+        continue-on-error: true
+      
       - run: echo ${{ steps.plan.outputs.stderr }}
+        continue-on-error: true
+      
       - run: echo ${{ steps.plan.outputs.exitcode }}
+        continue-on-error: true
