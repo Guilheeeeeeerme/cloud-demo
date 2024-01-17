@@ -102,7 +102,7 @@ jobs:
     
       - name: Load SWA Secret
         id: load-secret
-        run: echo "swa-secret=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }})" >> $GITHUB_OUTPUT
+        run: echo "swa-secret=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }})" | sed -e 's/["']//g' >> $GITHUB_OUTPUT
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
@@ -141,7 +141,7 @@ jobs:
       
       - name: Load SWA Secret
         id: load-secret
-        run: echo "webapp-name=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }})" >> $GITHUB_OUTPUT
+        run: echo "webapp-name=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }})" | sed -e 's/["']//g' >> $GITHUB_OUTPUT
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
