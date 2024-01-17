@@ -111,41 +111,7 @@ jobs:
       - name: Build
         run: npm run build:prod
         working-directory: web
-
-      # - run: npm install -g @azure/static-web-apps-cli@1.1.6 -y
-      - run: echo ${{ steps.load-secret.outputs.swa-secret }}
       
       - name: Deploy
-        run: npx @azure/static-web-apps-cli@1.1.6 deploy ./dist/web/ --deployment-token ${{ steps.load-secret.outputs.swa-secret }}
+        run: npx @azure/static-web-apps-cli@1.1.6 deploy ./dist/web/ --env production --deployment-token ${{ steps.load-secret.outputs.swa-secret }}
         working-directory: web
-
-      # 
-
-      # - name: Azure Login
-      #   uses: azure/login@v1
-      #   with:
-      #     creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
-
-      # - name: Azure CLI script
-      #   uses: azure/CLI@v1
-      #   with:
-      #     azcliversion: latest
-      #     inlineScript: |
-      #       az staticwebapp create -t ${{ steps.load-secret.outputs.swa-secret }}
-
-      # - name: Build And Deploy
-      #   id: builddeploy
-      #   uses: Azure/static-web-apps-deploy@v1
-      #   env:
-      #     AZURE_STATIC_WEB_APPS_API_TOKEN: "${{ steps.load-secret.outputs.swa-secret }}"
-      #   with:
-      #     azure_static_web_apps_api_token: ${{ env.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-      #     repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
-      #     action: "upload"
-      #     ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-      #     # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-      #     app_location: "/web" # App source code path
-      #     api_location: "" # Api source code path - optional
-      #     output_location: "dist/web" # Built app content directory - optional
-      #     app_build_command: npm run build:prod
-      #     ###### End of Repository/Build Configurations ######
