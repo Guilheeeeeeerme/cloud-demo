@@ -85,13 +85,19 @@ jobs:
 
     steps:
 
-      - name: Download All Artifacts
+      - name: Download Artifact
         uses: actions/download-artifact@master
         with:
           name: swa-secret
           path: swa-secret.txt
     
-      - run: cat ${{ env.ROOT_PATH }}/swa-secret.txt
+      - name: Load Secret
+        id: load-secret
+        run: cat swa-secret.txt
+    
+      - name: Show Secret
+        id: show-secret
+        run: echo ${{ steps.load-secret.outputs.stdout }}
 
       - name: Checkout 
         uses: actions/checkout@v3
