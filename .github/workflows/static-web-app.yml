@@ -159,15 +159,13 @@ jobs:
         with:
           creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
 
-      - run: echo ${{ steps.load-secret.outputs.webapp-name }}
-
-      # - name: 'Deploy to Azure Web App'
-      #   id: deploy-to-webapp
-      #   uses: azure/webapps-deploy@v2
-      #   with:
-      #     app-name: ${{ steps.load-secret.outputs.webapp-name }}
-      #     slot-name: 'Production'
-      #     package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: "${{ steps.load-secret.outputs.webapp-name }}"
+          slot-name: 'Production'
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
 
       # # - name: Azure CLI script
