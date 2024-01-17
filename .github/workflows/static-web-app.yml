@@ -161,6 +161,10 @@ jobs:
       # - name: Zip artifact for deployment
       #   run: zip release.zip ./* -r
       #   working-directory: api
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
 
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
@@ -172,10 +176,6 @@ jobs:
           startup-command: "npm run start:prod"
           # publish-profile: ${{ steps.load-secret.outputs.publish-profile }}
 
-      # # - name: Azure Login
-      # #   uses: azure/login@v1
-      # #   with:
-      # #     creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
 
       # # - name: Azure CLI script
       # #   uses: azure/CLI@v1
