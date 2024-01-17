@@ -36,11 +36,6 @@ resource "azurerm_resource_group" "sample-rg" {
   }
 }
 
-output "sample-web-api-key" {
-  value     = azurerm_static_site.sample-web.api_key
-  sensitive = true
-}
-
 ##### WEB #####
 resource "azurerm_static_site" "sample-web" {
   name                = "minimal-terraform-spa-web"
@@ -51,25 +46,30 @@ resource "azurerm_static_site" "sample-web" {
   sku_size            = "Free"
 }
 
-##### API #####
-# resource "azurerm_app_service_plan" "sample-api-sp" {
-#   name                = "minimal-terraform-spa-api-serviceplan"
-#   resource_group_name = azurerm_resource_group.sample-rg.name
-#   location            = azurerm_resource_group.sample-rg.location
-#   tags                = azurerm_resource_group.sample-rg.tags
+output "sample-web-api-key" {
+  value     = azurerm_static_site.sample-web.api_key
+  sensitive = true
+}
+
+#### API #####
+resource "azurerm_app_service_plan" "sample-api-sp" {
+  name                = "minimal-terraform-spa-api-serviceplan"
+  resource_group_name = azurerm_resource_group.sample-rg.name
+  location            = azurerm_resource_group.sample-rg.location
+  tags                = azurerm_resource_group.sample-rg.tags
 
 
-#   sku {
-#     tier = "Free" # Free, Basic, Standard, Premium
-#     size = "F1"   # https://azure.microsoft.com/en-us/pricing/details/app-service/windows/
-#   }
-# }
+  sku {
+    tier = "Free" # Free, Basic, Standard, Premium
+    size = "F1"   # https://azure.microsoft.com/en-us/pricing/details/app-service/windows/
+  }
+}
 
-# resource "azurerm_app_service" "sample-api" {
-#   name                = "minimal-terraform-spa-api"
-#   resource_group_name = azurerm_resource_group.sample-rg.name
-#   location            = azurerm_resource_group.sample-rg.location
-#   tags                = azurerm_resource_group.sample-rg.tags
+resource "azurerm_app_service" "sample-api" {
+  name                = "minimal-terraform-spa-api"
+  resource_group_name = azurerm_resource_group.sample-rg.name
+  location            = azurerm_resource_group.sample-rg.location
+  tags                = azurerm_resource_group.sample-rg.tags
 
-#   app_service_plan_id = azurerm_app_service_plan.sample-api-sp.id
-# }
+  app_service_plan_id = azurerm_app_service_plan.sample-api-sp.id
+}
