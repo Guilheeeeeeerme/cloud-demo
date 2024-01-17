@@ -21,8 +21,8 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ SECRETS.AZURE_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ SECRETS.AZURE_TENANT_ID }}
   
-  API_ROOT_PATH: '/api'      # set this to the path to your web app project, defaults to the repository root
-  WEB_ROOT_PATH: '/web'      # set this to the path to your web app project, defaults to the repository root
+  API_ROOT_PATH: './api'      # set this to the path to your web app project, defaults to the repository root
+  WEB_ROOT_PATH: './web'      # set this to the path to your web app project, defaults to the repository root
   WEB_BUILD_OUTPUT_LOCATION: 'dist/web'
   WEB_BUILD_COMMAND: 'npm run build:prod'
 
