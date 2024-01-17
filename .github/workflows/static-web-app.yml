@@ -113,14 +113,13 @@ jobs:
         working-directory: web
 
       # - run: npm install -g @azure/static-web-apps-cli@1.1.6 -y
+      - run: echo ${{ steps.load-secret.outputs.swa-secret }}
       
       - name: Deploy
-        env:
-          SWA_CLI_DEPLOYMENT_TOKEN: ${{ steps.load-secret.outputs.swa-secret }}
-        run: npx @azure/static-web-apps-cli@1.1.6 deploy ./dist/web/
+        run: npx @azure/static-web-apps-cli@1.1.6 deploy ./dist/web/ --deployment-token ${{ steps.load-secret.outputs.swa-secret }}
         working-directory: web
 
-      # --deployment-token ${{ env.SWA_CLI_DEPLOYMENT_TOKEN }}
+      # 
 
       # - name: Azure Login
       #   uses: azure/login@v1
