@@ -114,7 +114,7 @@ jobs:
 
       - run: npm install -g @azure/static-web-apps-cli@1.1.6 -y
       
-      - name: Deploy Web
+      - name: Deploy
         env:
           SWA_CLI_DEPLOYMENT_TOKEN: ${{ steps.load-secret.outputs.swa-secret }}
         run: swa deploy ./dist/web/
