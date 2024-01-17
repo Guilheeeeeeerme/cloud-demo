@@ -75,6 +75,6 @@ resource "azurerm_app_service" "sample-api" {
 }
 
 output "webapp-site-credential" {
-  value     = azurerm_app_service.sample-api.site_credential
+  value     = azurerm_app_service.sample-api.site_credential[0]
   sensitive = true
 }
