@@ -64,15 +64,17 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve -input=false
       
-    - name: Load ${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }}
+    - name: Load SWA Token
       run: |
         mkdir -p ${{ env.TERRAFORM_OUTPUTS_PATH }}
         terraform output swa-api_key > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }}
+        sed -i 's/"//g' ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }}
     
-    - name: Load ${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
+    - name: Load Web App Name
       run: |
         mkdir -p ${{ env.TERRAFORM_OUTPUTS_PATH }}
         terraform output webapp-name > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
+        sed -i 's/"//g' ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
 
     - run: cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }}
     - run: cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
