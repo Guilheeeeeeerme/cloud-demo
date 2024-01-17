@@ -46,7 +46,7 @@ resource "azurerm_static_site" "sample-web" {
   sku_size            = "Free"
 }
 
-output "swa-api-key" {
+output "swa-api_key" {
   value     = azurerm_static_site.sample-web.api_key
   sensitive = true
 }
@@ -74,7 +74,6 @@ resource "azurerm_app_service" "sample-api" {
   app_service_plan_id = azurerm_app_service_plan.sample-api-sp.id
 }
 
-output "webapp-site-credential" {
-  value     = azurerm_app_service.sample-api.site_credential[0]
-  sensitive = true
+output "webapp-name" {
+  value     = azurerm_app_service.sample-api.name
 }

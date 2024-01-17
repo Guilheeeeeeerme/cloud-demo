@@ -11,13 +11,12 @@ permissions:
 
 env:
   TERRAFORM_OUTPUTS_PATH: 'terraform-outputs'
-  TERRAFORM_SWA_SECRET_PATH: 'swa-secret.txt'
-  TERRAFORM_PUBLISH_PROFILE_PATH: 'publish-profile.txt'
+  TERRAFORM_SWA_SECRET_FILE_NAME: 'swa-secret.txt'
+  TERRAFORM_WEBAPP_NAME_FILE_NAME: 'webapp-name.txt'
   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: ${{ SECRETS.AZURE_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ SECRETS.AZURE_TENANT_ID }}
-  AZURE_WEBAPP_NAME: minimal-terraform-spa-api  # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: './api'      # set this to the path to your web app project, defaults to the repository root
 
 jobs:
@@ -65,15 +64,15 @@ jobs:
     - name: Terraform Apply
       run: terraform apply -auto-approve -input=false
       
-    - name: Load ${{ env.TERRAFORM_SWA_SECRET_PATH }}
+    - name: Load ${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }}
       run: |
         mkdir -p ${{ env.TERRAFORM_OUTPUTS_PATH }}
-        terraform output swa-api-key > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_PATH }}
+        terraform output swa-api_key > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }}
     
-    - name: Load ${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }}
+    - name: Load ${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
       run: |
         mkdir -p ${{ env.TERRAFORM_OUTPUTS_PATH }}
-        terraform output webapp-site-credential > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }}
+        terraform output webapp-name > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
@@ -103,7 +102,7 @@ jobs:
     
       - name: Load SWA Secret
         id: load-secret
-        run: echo "swa-secret=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_PATH }})" >> $GITHUB_OUTPUT
+        run: echo "swa-secret=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }})" >> $GITHUB_OUTPUT
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
@@ -139,13 +138,10 @@ jobs:
         with:
           name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
           path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
-    
-      - run: echo ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }}
-      - run: cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }}
       
-      # - name: Load SWA Secret
-      #   id: load-secret
-      #   run: echo "publish-profile=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }})" >> $GITHUB_OUTPUT
+      - name: Load SWA Secret
+        id: load-secret
+        run: echo "webapp-name=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }})" >> $GITHUB_OUTPUT
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
@@ -170,11 +166,9 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          app-name: ${{ steps.load-secret.outputs.webapp-name }}
           slot-name: 'Production'
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-          # startup-command: "npm run start:prod"
-          # publish-profile: ${{ steps.load-secret.outputs.publish-profile }}
 
 
       # # - name: Azure CLI script
