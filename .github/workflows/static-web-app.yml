@@ -104,7 +104,7 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: Install dependencies
+      - name: Install
         run: npm install
         working-directory: web
       
@@ -112,12 +112,12 @@ jobs:
         run: npm run build:prod
         working-directory: web
 
-      - run: npm install -g @azure/static-web-apps-cli@1.1.6 -y
+      # - run: npm install -g @azure/static-web-apps-cli@1.1.6 -y
       
       - name: Deploy
         env:
           SWA_CLI_DEPLOYMENT_TOKEN: ${{ steps.load-secret.outputs.swa-secret }}
-        run: swa deploy ./dist/web/
+        run: npx @azure/static-web-apps-cli@1.1.6 deploy ./dist/web/
         working-directory: web
 
       # --deployment-token ${{ env.SWA_CLI_DEPLOYMENT_TOKEN }}
