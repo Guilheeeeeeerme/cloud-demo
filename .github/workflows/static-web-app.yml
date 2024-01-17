@@ -23,6 +23,24 @@ jobs:
         shell: bash
 
     steps:
+      
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          client-id: ${{env.ARM_CLIENT_ID}}
+          tenant-id:  ${{env.ARM_TENANT_ID}}
+          subscription-id: ${{env.ARM_SUBSCRIPTION_ID}}
+
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az account show
+            az storage -h
+
+
       - name: Checkout 
         uses: actions/checkout@v3
 
@@ -105,17 +123,17 @@ jobs:
       #       npm run build:prod
       #   working-directory: web
 
-      - name: Build And Deploy
-        id: builddeploy
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: "${{ steps.load-secret.outputs.swa-secret }}"
-          repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
-          action: "upload"
-          ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
-          # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/web" # App source code path
-          api_location: "" # Api source code path - optional
-          output_location: "dist/web" # Built app content directory - optional
-          app_build_command: npm run build:prod
-          ###### End of Repository/Build Configurations ######
+      # - name: Build And Deploy
+      #   id: builddeploy
+      #   uses: Azure/static-web-apps-deploy@v1
+      #   with:
+      #     azure_static_web_apps_api_token: "${{ steps.load-secret.outputs.swa-secret }}"
+      #     repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+      #     action: "upload"
+      #     ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+      #     # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+      #     app_location: "/web" # App source code path
+      #     api_location: "" # Api source code path - optional
+      #     output_location: "dist/web" # Built app content directory - optional
+      #     app_build_command: npm run build:prod
+      #     ###### End of Repository/Build Configurations ######
