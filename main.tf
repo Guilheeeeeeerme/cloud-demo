@@ -23,8 +23,6 @@ terraform {
 # skip_provider_registration = true # This is only required when the User, Service Principal, or Identity running Terraform lacks the permissions to register Azure Resource Providers.
 provider "azurerm" {
   features {}
-  # subscription_id = "cfe3adbf-451e-43e4-bae4-d5ef962b3c4c"
-  # tenant_id       = "b8e920ee-48a6-416d-bc6b-332073b68efd"
 }
 
 # Create a resource group

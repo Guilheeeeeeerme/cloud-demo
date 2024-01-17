@@ -1,0 +1,118 @@
+name: Terraform Static Web App Deploy
+
+on:
+  push:
+    branches: 
+      - main
+
+env:
+  ROOT_PATH: '${{github.workspace}}'
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_SUBSCRIPTION_ID: ${{ SECRETS.AZURE_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ SECRETS.AZURE_TENANT_ID }}
+
+jobs:
+  terraform_plan:
+    name: 'terraform plan'
+    runs-on: ubuntu-latest
+    environment: production
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+
+      - name: Setup terraform
+        uses: hashicorp/setup-terraform@v3
+      
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ${{ env.ROOT_PATH }}
+
+      - name: Terraform Plan
+        run: terraform plan -no-color -input=false
+        working-directory: ${{ env.ROOT_PATH }}
+  
+  terraform_apply:
+    name: 'terraform apply'
+    needs: [terraform_plan]
+    runs-on: ubuntu-latest
+    environment: production
+    
+    defaults:
+      run:
+        shell: bash
+        
+    steps:
+    - name: Checkout 
+      uses: actions/checkout@v3
+
+    - name: Setup terraform
+      uses: hashicorp/setup-terraform@v3
+      
+    - name: Terraform Init
+      run: terraform init
+      working-directory: ${{ env.ROOT_PATH }}
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -input=false
+      working-directory: ${{ env.ROOT_PATH }}
+      
+    - name: Load Secret
+      id: load-secret
+      run: terraform output sample-web-api-key > swa-secret.txt
+      working-directory: ${{ env.ROOT_PATH }}
+
+    - uses: actions/upload-artifact@master
+      with:
+        name: swa-secret
+        path: ${{ env.ROOT_PATH }}
+
+  build_and_deploy:
+    name: 'build and deploy'
+    needs: [terraform_apply]
+    runs-on: ubuntu-latest
+    environment: production
+    
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout 
+        uses: actions/checkout@v3
+
+      - uses: actions/download-artifact@master
+        with:
+          name: swa-secret
+          path: ${{ env.ROOT_PATH }}
+    
+      - run: cat ${{ env.ROOT_PATH }}/swa-secret.txt
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - run: |
+          cd web
+          npm install
+          npm run build:prod
+
+    # - name: Build And Deploy
+    #   id: builddeploy
+    #   uses: Azure/static-web-apps-deploy@v1
+    #   with:
+    #     azure_static_web_apps_api_token: ${{ steps.load-secret.outputs.stdout }}
+    #     repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
+    #     action: "upload"
+    #     ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
+    #     # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
+    #     app_location: "/web" # App source code path
+    #     api_location: "" # Api source code path - optional
+    #     output_location: "dist/web" # Built app content directory - optional
+    #     app_build_command: npm run build:prod
+    #     ###### End of Repository/Build Configurations ######
