@@ -104,10 +104,12 @@ jobs:
         with:
           node-version: '18.x'
 
-      - name: Build Web
-        run: |
-            npm install
-            npm run build:prod
+      - name: Install dependencies
+        run: npm install
+        working-directory: web
+      
+      - name: Build
+        run: npm run build:prod
         working-directory: web
       
       - name: Deploy Web
@@ -115,8 +117,10 @@ jobs:
           SWA_CLI_DEPLOYMENT_TOKEN: ${{ steps.load-secret.outputs.swa-secret }}
         run: |
             npm install -g @azure/static-web-apps-cli@1.1.6 -y
-            swa deploy ./dist/web/ --deployment-token ${{ env.SWA_CLI_DEPLOYMENT_TOKEN }}
+            swa deploy ./dist/web/
         working-directory: web
+
+      # --deployment-token ${{ env.SWA_CLI_DEPLOYMENT_TOKEN }}
 
       # - name: Azure Login
       #   uses: azure/login@v1
