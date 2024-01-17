@@ -143,9 +143,9 @@ jobs:
       - run: echo ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }}
       - run: cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }}
       
-      - name: Load SWA Secret
-        id: load-secret
-        run: echo "publish-profile=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }})" >> $GITHUB_OUTPUT
+      # - name: Load SWA Secret
+      #   id: load-secret
+      #   run: echo "publish-profile=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }})" >> $GITHUB_OUTPUT
 
       - name: Set up Node.js version
         uses: actions/setup-node@v3
@@ -170,7 +170,7 @@ jobs:
           slot-name: 'Production'
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
           startup-command: "npm run start:prod"
-          publish-profile: ${{ steps.load-secret.outputs.publish-profile }}
+          # publish-profile: ${{ steps.load-secret.outputs.publish-profile }}
 
       # # - name: Azure Login
       # #   uses: azure/login@v1
