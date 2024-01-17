@@ -27,19 +27,6 @@ jobs:
         shell: bash
 
     steps:
-      
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
-
-      - name: Azure CLI script
-        uses: azure/CLI@v1
-        with:
-          azcliversion: latest
-          inlineScript: |
-            az account show
-
 
       - name: Checkout 
         uses: actions/checkout@v3
@@ -113,15 +100,27 @@ jobs:
       # - name: Show Secret
       #   run: echo ${{ steps.load-secret.outputs.swa-secret }}
 
-      # - uses: actions/setup-node@v3
-      #   with:
-      #     node-version: '18.x'
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
 
-      # - name: Build Web
-      #   run: |
-      #       npm install
-      #       npm run build:prod
-      #   working-directory: web
+      - name: Build Web
+        run: |
+            npm install
+            npm run build:prod
+        working-directory: web
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
+
+      - name: Azure CLI script
+        uses: azure/CLI@v1
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
 
       # - name: Build And Deploy
       #   id: builddeploy
