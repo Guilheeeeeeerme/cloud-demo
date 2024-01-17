@@ -7,7 +7,6 @@ on:
 
 env:
   TERRAFORM_SECRETS_PATH: 'terraform-secrets'
-  ROOT_PATH: '${{github.workspace}}'
   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: ${{ SECRETS.AZURE_SUBSCRIPTION_ID }}
@@ -32,11 +31,9 @@ jobs:
       
       - name: Terraform Init
         run: terraform init
-        working-directory: ${{ env.ROOT_PATH }}
 
       - name: Terraform Plan
         run: terraform plan -no-color -input=false
-        working-directory: ${{ env.ROOT_PATH }}
   
   terraform_apply:
     name: 'terraform apply'
@@ -57,18 +54,15 @@ jobs:
       
     - name: Terraform Init
       run: terraform init
-      working-directory: ${{ env.ROOT_PATH }}
 
     - name: Terraform Apply
       run: terraform apply -auto-approve -input=false
-      working-directory: ${{ env.ROOT_PATH }}
       
     - name: Load Secret
       id: load-secret
       run: |
         mkdir -p ${{ env.TERRAFORM_SECRETS_PATH }}
         terraform output sample-web-api-key > ${{ env.TERRAFORM_SECRETS_PATH }}/swa-secret.txt
-      working-directory: ${{ env.ROOT_PATH }}
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
