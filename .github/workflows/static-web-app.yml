@@ -74,52 +74,56 @@ jobs:
         mkdir -p ${{ env.TERRAFORM_OUTPUTS_PATH }}
         terraform output webapp-name > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
 
-    - name: Upload Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
-        path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+    - run: cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }}
+    - run: cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
 
-  build_and_deploy_web:
-    name: 'build and deploy web'
-    needs: [terraform_apply]
-    runs-on: ubuntu-latest
-    environment: production
+
+    # - name: Upload Artifact
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+    #     path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+
+  # build_and_deploy_web:
+  #   name: 'build and deploy web'
+  #   needs: [terraform_apply]
+  #   runs-on: ubuntu-latest
+  #   environment: production
     
-    defaults:
-      run:
-        shell: bash
+  #   defaults:
+  #     run:
+  #       shell: bash
 
-    steps:
+  #   steps:
       
-      - uses: actions/checkout@v4
+  #     - uses: actions/checkout@v4
 
-      - name: Download Artifact
-        uses: actions/download-artifact@master
-        with:
-          name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
-          path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+  #     - name: Download Artifact
+  #       uses: actions/download-artifact@master
+  #       with:
+  #         name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+  #         path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
     
-      - name: Load SWA Secret
-        id: load-secret
-        run: echo "AZURE_SWA_DEPLOYMENT_TOKEN=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }})" >> $GITHUB_OUTPUT
+  #     - name: Load SWA Secret
+  #       id: load-secret
+  #       run: echo "AZURE_SWA_DEPLOYMENT_TOKEN=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }})" >> $GITHUB_OUTPUT
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
+  #     - name: Set up Node.js version
+  #       uses: actions/setup-node@v3
+  #       with:
+  #         node-version: '18.x'
 
-      - name: npm install, build
-        run: |
-          npm install
-          npm run build:prod --if-present
-        working-directory: web
+  #     - name: npm install, build
+  #       run: |
+  #         npm install
+  #         npm run build:prod --if-present
+  #       working-directory: web
       
-      - name: Deploy
-        run: npx @azure/static-web-apps-cli@1.1.6 deploy ./dist/web/ --env production --deployment-token ${{ steps.load-secret.outputs.AZURE_SWA_DEPLOYMENT_TOKEN }}
-        working-directory: web
+  #     - name: Deploy
+  #       run: npx @azure/static-web-apps-cli@1.1.6 deploy ./dist/web/ --env production --deployment-token ${{ steps.load-secret.outputs.AZURE_SWA_DEPLOYMENT_TOKEN }}
+  #       working-directory: web
 
-  build_and_deploy_api:
+  # build_and_deploy_api:
     name: 'build and deploy api'
     needs: [terraform_apply]
     runs-on: ubuntu-latest
