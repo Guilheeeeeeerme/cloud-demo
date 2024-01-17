@@ -162,8 +162,10 @@ jobs:
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
+        env:
+          WEP_APP_NAME: ${{ steps.load-secret.outputs.webapp-name }}
         with:
-          app-name: "${{ steps.load-secret.outputs.webapp-name }}"
+          app-name: ${{ env.WEP_APP_NAME }}
           slot-name: 'Production'
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
 
