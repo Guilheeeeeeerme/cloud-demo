@@ -59,7 +59,6 @@ jobs:
       run: terraform apply -auto-approve -input=false
       
     - name: Load Secret
-      id: load-secret
       run: |
         mkdir -p ${{ env.TERRAFORM_SECRETS_PATH }}
         terraform output sample-web-api-key > ${{ env.TERRAFORM_SECRETS_PATH }}/swa-secret.txt
@@ -93,20 +92,18 @@ jobs:
         run: cat ${{ env.TERRAFORM_SECRETS_PATH }}/swa-secret.txt
     
       - name: Show Secret
-        id: show-secret
         run: echo ${{ steps.load-secret.outputs.stdout }}
 
-      - name: Checkout 
-        uses: actions/checkout@v3
-
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '18.x'
-      - run: |
-          cd web
-          npm install
-          npm run build:prod
+
+      - name: Build Web
+        run: |
+            npm install
+            npm run build:prod
+        working-directory: web
 
     # - name: Build And Deploy
     #   id: builddeploy
