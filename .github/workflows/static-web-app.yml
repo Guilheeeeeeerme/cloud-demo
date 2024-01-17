@@ -89,10 +89,10 @@ jobs:
     
       - name: Load Secret
         id: load-secret
-        run: cat ${{ env.TERRAFORM_SECRETS_PATH }}/swa-secret.txt
+        run: echo "swa-secret=$(cat ${{ env.TERRAFORM_SECRETS_PATH }}/swa-secret.txt)" >> $GITHUB_OUTPUT
     
       - name: Show Secret
-        run: echo ${{ steps.load-secret.outputs.stdout }}
+        run: echo ${{ steps.load-secret.outputs.swa-secret }}
 
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
