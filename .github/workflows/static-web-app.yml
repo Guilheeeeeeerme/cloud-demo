@@ -140,42 +140,45 @@ jobs:
           name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
           path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
     
-      - name: Load SWA Secret
-        id: load-secret
-        run: echo "publish-profile=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }})" >> $GITHUB_OUTPUT
+      - run: echo ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }}
+      - run: cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }}
+      
+      # - name: Load SWA Secret
+      #   id: load-secret
+      #   run: echo "publish-profile=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_PUBLISH_PROFILE_PATH }})" >> $GITHUB_OUTPUT
 
-      - name: Set up Node.js version
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
+      # - name: Set up Node.js version
+      #   uses: actions/setup-node@v3
+      #   with:
+      #     node-version: '18.x'
 
-      - name: npm install, build, and test
-        run: |
-          npm install
-          npm run build --if-present
-        working-directory: api
-
-      # - name: Zip artifact for deployment
-      #   run: zip release.zip ./* -r
+      # - name: npm install, build, and test
+      #   run: |
+      #     npm install
+      #     npm run build --if-present
       #   working-directory: api
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          slot-name: 'Production'
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-          publish-profile: ${{ steps.load-secret.outputs.publish-profile }}
+      # # - name: Zip artifact for deployment
+      # #   run: zip release.zip ./* -r
+      # #   working-directory: api
 
-      # - name: Azure Login
-      #   uses: azure/login@v1
+      # - name: 'Deploy to Azure Web App'
+      #   id: deploy-to-webapp
+      #   uses: azure/webapps-deploy@v2
       #   with:
-      #     creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
+      #     app-name: ${{ env.AZURE_WEBAPP_NAME }}
+      #     slot-name: 'Production'
+      #     package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      #     publish-profile: ${{ steps.load-secret.outputs.publish-profile }}
 
-      # - name: Azure CLI script
-      #   uses: azure/CLI@v1
-      #   with:
-      #     azcliversion: latest
-      #     inlineScript: |
-      #       az accounts
+      # # - name: Azure Login
+      # #   uses: azure/login@v1
+      # #   with:
+      # #     creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
+
+      # # - name: Azure CLI script
+      # #   uses: azure/CLI@v1
+      # #   with:
+      # #     azcliversion: latest
+      # #     inlineScript: |
+      # #       az accounts
