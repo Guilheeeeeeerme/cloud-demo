@@ -46,11 +46,6 @@ resource "azurerm_static_site" "sample-web" {
   sku_size            = "Free"
 }
 
-output "swa-api_key" {
-  value     = azurerm_static_site.sample-web.api_key
-  sensitive = true
-}
-
 #### API #####
 resource "azurerm_app_service_plan" "sample-api-sp" {
   name                = "minimal-terraform-spa-api-serviceplan"
@@ -74,6 +69,16 @@ resource "azurerm_app_service" "sample-api" {
   app_service_plan_id = azurerm_app_service_plan.sample-api-sp.id
 }
 
-output "webapp-name" {
+
+# Required for the WEB deploy
+# TERRAFORM_SWA_API_KEY_OUTPUT
+output "swa-api_key_output" {
+  value     = azurerm_static_site.sample-web.api_key
+  sensitive = true
+}
+
+# Required for the API deploy 
+# TERRAFORM_WEB_APP_NAME_OUTPUT
+output "webapp-name-output" {
   value     = azurerm_app_service.sample-api.name
 }

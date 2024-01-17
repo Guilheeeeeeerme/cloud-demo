@@ -10,14 +10,19 @@ permissions:
   contents: read
 
 env:
+  TERRAFORM_SWA_API_KEY_OUTPUT: 'swa-api_key_output'
+  TERRAFORM_WEB_APP_NAME_OUTPUT: 'webapp-name-output'
   TERRAFORM_OUTPUTS_PATH: 'terraform-outputs'
-  TERRAFORM_SWA_SECRET_FILE_NAME: 'swa-secret.txt'
-  TERRAFORM_WEBAPP_NAME_FILE_NAME: 'webapp-name.txt'
+  SWA_SECRET_FILE_NAME: 'swa-secret.txt'
+  WEBAPP_NAME_FILE_NAME: 'webapp-name.txt'
+  
   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: ${{ SECRETS.AZURE_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ SECRETS.AZURE_TENANT_ID }}
-  AZURE_WEBAPP_PACKAGE_PATH: './api'      # set this to the path to your web app project, defaults to the repository root
+  
+  API_ROOT_PATH: './api'      # set this to the path to your web app project, defaults to the repository root
+  WEB_ROOT_PATH: './web'      # set this to the path to your web app project, defaults to the repository root
 
 jobs:
   terraform_plan:
@@ -67,113 +72,108 @@ jobs:
     - name: Load SWA Token
       run: |
         mkdir -p ${{ env.TERRAFORM_OUTPUTS_PATH }}
-        terraform output -raw swa-api_key > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }}
-      # sed -i 's/"//g' ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }}
+        terraform output -raw ${{ env.TERRAFORM_SWA_API_KEY_OUTPUT }} > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.SWA_SECRET_FILE_NAME }}
     
     - name: Load Web App Name
       run: |
         mkdir -p ${{ env.TERRAFORM_OUTPUTS_PATH }}
-        terraform output -raw webapp-name > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
-      # sed -i 's/"//g' ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
-
-    - run: cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }}
-    - run: cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }}
+        terraform output -raw ${{env.TERRAFORM_WEB_APP_NAME_OUTPUT}} > ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.WEBAPP_NAME_FILE_NAME }}
 
 
-    # - name: Upload Artifact
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
-    #     path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+        path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
 
-  # build_and_deploy_web:
-  #   name: 'build and deploy web'
-  #   needs: [terraform_apply]
-  #   runs-on: ubuntu-latest
-  #   environment: production
+  build_and_deploy_web:
+    name: 'build and deploy web'
+    needs: [terraform_apply]
+    runs-on: ubuntu-latest
+    environment: production
     
-  #   defaults:
-  #     run:
-  #       shell: bash
+    defaults:
+      run:
+        shell: bash
 
-  #   steps:
+    steps:
       
-  #     - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-  #     - name: Download Artifact
-  #       uses: actions/download-artifact@master
-  #       with:
-  #         name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
-  #         path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+      - name: Download Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+          path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
     
-  #     - name: Load SWA Secret
-  #       id: load-secret
-  #       run: echo "AZURE_SWA_DEPLOYMENT_TOKEN=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_SWA_SECRET_FILE_NAME }})" >> $GITHUB_OUTPUT
+      - name: Load SWA Secret
+        id: load-secret
+        run: echo "AZURE_SWA_DEPLOYMENT_TOKEN=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.SWA_SECRET_FILE_NAME }})" >> $GITHUB_OUTPUT
 
-  #     - name: Set up Node.js version
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '18.x'
+      - name: Set up Node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
 
-  #     - name: npm install, build
-  #       run: |
-  #         npm install
-  #         npm run build:prod --if-present
-  #       working-directory: web
+      - name: npm install, build
+        run: |
+          npm install
+          npm run build:prod --if-present
+        working-directory: ${{env.WEB_ROOT_PATH}}
       
-  #     - name: Deploy
-  #       run: npx @azure/static-web-apps-cli@1.1.6 deploy ./dist/web/ --env production --deployment-token ${{ steps.load-secret.outputs.AZURE_SWA_DEPLOYMENT_TOKEN }}
-  #       working-directory: web
+      - name: Deploy
+        run: npx @azure/static-web-apps-cli@1.1.6 deploy ./dist/web/ --env production --deployment-token ${{ steps.load-secret.outputs.AZURE_SWA_DEPLOYMENT_TOKEN }}
+        working-directory: ${{env.WEB_ROOT_PATH}}
 
-  # build_and_deploy_api:
-  #   name: 'build and deploy api'
-  #   needs: [terraform_apply]
-  #   runs-on: ubuntu-latest
-  #   environment: production
+  build_and_deploy_api:
+    name: 'build and deploy api'
+    needs: [terraform_apply]
+    runs-on: ubuntu-latest
+    environment: production
     
-  #   defaults:
-  #     run:
-  #       shell: bash
+    defaults:
+      run:
+        shell: bash
 
-  #   steps:
+    steps:
 
-  #     - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-  #     - name: Download Artifact
-  #       uses: actions/download-artifact@master
-  #       with:
-  #         name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
-  #         path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+      - name: Download Artifact
+        uses: actions/download-artifact@master
+        with:
+          name: ${{ env.TERRAFORM_OUTPUTS_PATH }}
+          path: ${{ env.TERRAFORM_OUTPUTS_PATH }}
       
-  #     - name: Load SWA Secret
-  #       id: load-secret
-  #       run: echo "AZURE_WEB_APP_NAME=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.TERRAFORM_WEBAPP_NAME_FILE_NAME }})" >> $GITHUB_OUTPUT
+      - name: Load SWA Secret
+        id: load-secret
+        run: echo "AZURE_WEB_APP_NAME=$(cat ${{ env.TERRAFORM_OUTPUTS_PATH }}/${{ env.WEBAPP_NAME_FILE_NAME }})" >> $GITHUB_OUTPUT
 
-  #     - name: Set up Node.js version
-  #       uses: actions/setup-node@v3
-  #       with:
-  #         node-version: '18.x'
+      - name: Set up Node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
 
-  #     - name: npm install, build, and test
-  #       run: |
-  #         npm install
-  #         npm run build --if-present
-  #       working-directory: api
+      - name: npm install, build, and test
+        run: |
+          npm install
+          npm run build --if-present
+        working-directory: api
 
-  #     - name: Azure Login
-  #       uses: azure/login@v1
-  #       with:
-  #         creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
 
-  #     - name: 'Deploy to Azure Web App'
-  #       id: deploy-to-webapp
-  #       uses: azure/webapps-deploy@v2
-  #       env:
-  #         WEP_APP_NAME: ${{ steps.load-secret.outputs.AZURE_WEB_APP_NAME }}
-  #       with:
-  #         app-name: ${{ env.WEP_APP_NAME }}
-  #         slot-name: 'Production'
-  #         package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      - name: 'Deploy to Azure Web App'
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
+        env:
+          WEP_APP_NAME: ${{ steps.load-secret.outputs.AZURE_WEB_APP_NAME }}
+        with:
+          app-name: ${{ env.WEP_APP_NAME }}
+          slot-name: 'Production'
+          package: ${{ env.API_ROOT_PATH }}
 
 
       # # - name: Azure CLI script
