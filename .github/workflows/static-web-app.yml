@@ -67,10 +67,11 @@ jobs:
       run: terraform output sample-web-api-key > swa-secret.txt
       working-directory: ${{ env.ROOT_PATH }}
 
-    - uses: actions/upload-artifact@master
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
       with:
         name: swa-secret
-        path: ${{ env.ROOT_PATH }}
+        path: swa-secret.txt
 
   build_and_deploy:
     name: 'build and deploy'
@@ -83,15 +84,17 @@ jobs:
         shell: bash
 
     steps:
-      - name: Checkout 
-        uses: actions/checkout@v3
 
-      - uses: actions/download-artifact@master
+      - name: Download All Artifacts
+        uses: actions/download-artifact@master
         with:
           name: swa-secret
-          path: ${{ env.ROOT_PATH }}
+          path: swa-secret.txt
     
       - run: cat ${{ env.ROOT_PATH }}/swa-secret.txt
+
+      - name: Checkout 
+        uses: actions/checkout@v3
 
       - name: Use Node.js
         uses: actions/setup-node@v3
