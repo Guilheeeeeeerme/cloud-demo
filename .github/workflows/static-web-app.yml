@@ -95,7 +95,7 @@ jobs:
         id: load-secret
         run: echo "AZURE_STATIC_WEB_APPS_API_TOKEN=$(terraform output -raw ${{ env.TERRAFORM_SWA_API_KEY_OUTPUT }})" >> $GITHUB_OUTPUT
 
-      - run: echo${{ steps.load-secret.outputs.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+      - run: echo ${{ steps.load-secret.outputs.AZURE_STATIC_WEB_APPS_API_TOKEN }}
 
       # - name: Build And Deploy
       #   id: builddeploy
