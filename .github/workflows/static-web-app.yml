@@ -10,20 +10,21 @@ permissions:
   contents: read
 
 env:
-  TERRAFORM_SWA_API_KEY_OUTPUT: 'swa-api_key_output'
-  TERRAFORM_WEB_APP_NAME_OUTPUT: 'webapp-name-output'
-  TERRAFORM_OUTPUTS_PATH: 'terraform-outputs'
-  SWA_SECRET_FILE_NAME: 'swa-secret.txt'
-  WEBAPP_NAME_FILE_NAME: 'webapp-name.txt'
   
+  # FOR AZURE
   ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
   ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: ${{ SECRETS.AZURE_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ SECRETS.AZURE_TENANT_ID }}
   
+  # FOR THE API
   API_ROOT_PATH: './api'      # set this to the path to your web app project, defaults to the repository root
+  API_SLOT_NAME: 'Production'
+  TERRAFORM_SWA_API_KEY_OUTPUT: 'swa-api_key_output'
   
-  WEB_ROOT_PATH: '/web'      # set this to the path to your web app project, defaults to the repository root
+  # FOR THE WEB
+  WEB_ROOT_PATH: '/web'
+  TERRAFORM_WEB_APP_NAME_OUTPUT: 'webapp-name-output'
   WEB_BUILD_OUTPUT_LOCATION: 'dist/web'
   WEB_BUILD_COMMAND: 'npm run build:prod'
 
@@ -93,14 +94,14 @@ jobs:
         run: terraform init
         
       - name: Terraform Output SWA Api Key
-        id: load-secret
+        id: load-from-terraform
         run: echo "AZURE_STATIC_WEB_APPS_API_TOKEN=$(terraform output -raw ${{ env.TERRAFORM_SWA_API_KEY_OUTPUT }})" >> $GITHUB_OUTPUT
 
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ steps.load-secret.outputs.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+          azure_static_web_apps_api_token: ${{ steps.load-from-terraform.outputs.AZURE_STATIC_WEB_APPS_API_TOKEN }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
@@ -132,7 +133,7 @@ jobs:
         run: terraform init
         
       - name: Terraform Output SWA Api Key
-        id: load-secret
+        id: load-from-terraform
         run: echo "AZURE_WEB_APP_NAME=$(terraform output -raw ${{ env.TERRAFORM_WEB_APP_NAME_OUTPUT }})" >> $GITHUB_OUTPUT
 
       - name: Set up Node.js version
@@ -155,6 +156,6 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ steps.load-secret.outputs.AZURE_WEB_APP_NAME }}
-          slot-name: 'Production'
+          app-name: ${{ steps.load-from-terraform.outputs.AZURE_WEB_APP_NAME }}
+          slot-name: ${{ env.API_SLOT_NAME }}
           package: ${{ env.API_ROOT_PATH }}
