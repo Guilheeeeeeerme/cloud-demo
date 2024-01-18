@@ -1,3 +1,3 @@
 export const environment = {
-    apiUrl: 'https://cloud-demo-api-v2.azurewebsites.net'
+    apiUrl: 'https://minimal-terraform-spa-api.azurewebsites.net'
 }
