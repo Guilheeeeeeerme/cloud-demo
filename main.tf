@@ -67,6 +67,17 @@ resource "azurerm_app_service" "sample-api" {
   tags                = azurerm_resource_group.sample-rg.tags
 
   app_service_plan_id = azurerm_app_service_plan.sample-api-sp.id
+
+  site_config {
+    
+  }
+  logs {
+    detailed_error_messages_enabled = true
+    failed_request_tracing_enabled = true
+    application_logs {
+      file_system_level = "Verbose"
+    }
+  }
 }
 
 
