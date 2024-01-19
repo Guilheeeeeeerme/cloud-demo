@@ -1,4 +1,4 @@
-name: Terraform Static Web App Deploy
+name: Terraform, Build and Deploy
 
 on:
   push:

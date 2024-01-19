@@ -12,9 +12,9 @@ terraform {
   }
 
   backend "azurerm" {
-    resource_group_name  = "minimal-terraform-spa-tfstate-rg"
-    storage_account_name = "creedminimalspa"
-    container_name       = "tfstate"
+    resource_group_name  = "CreedInfrastructureAutomationTest"
+    storage_account_name = "creedterraformstatetest1"
+    container_name       = "minimal-terraform-spa-tfstate"
     key                  = "azure-example"
   }
 }
@@ -47,26 +47,38 @@ resource "azurerm_static_site" "sample-web" {
 }
 
 #### API #####
-resource "azurerm_app_service_plan" "sample-api-sp" {
+
+resource "azurerm_service_plan" "sample-api-sp" {
   name                = "minimal-terraform-spa-api-serviceplan"
   resource_group_name = azurerm_resource_group.sample-rg.name
   location            = azurerm_resource_group.sample-rg.location
   tags                = azurerm_resource_group.sample-rg.tags
-
-
-  sku {
-    tier = "Free" # Free, Basic, Standard, Premium
-    size = "F1"   # https://azure.microsoft.com/en-us/pricing/details/app-service/windows/
-  }
+  os_type             = "Linux"
+  sku_name            = "B1" # https://azure.microsoft.com/en-us/pricing/details/app-service/windows/
 }
 
-resource "azurerm_app_service" "sample-api" {
+resource "azurerm_linux_web_app" "sample-api" {
   name                = "minimal-terraform-spa-api"
   resource_group_name = azurerm_resource_group.sample-rg.name
   location            = azurerm_resource_group.sample-rg.location
   tags                = azurerm_resource_group.sample-rg.tags
+  service_plan_id     = azurerm_service_plan.sample-api-sp.id
 
-  app_service_plan_id = azurerm_app_service_plan.sample-api-sp.id
+
+  site_config {
+
+    application_stack {
+      node_version = "18-lts"
+    }
+  }
+
+  logs {
+    detailed_error_messages = true
+    failed_request_tracing = true
+    application_logs {
+      file_system_level = "Verbose"
+    }
+  }
 }
 
 
@@ -80,5 +92,5 @@ output "swa-api_key_output" {
 # Required for the API deploy 
 # TERRAFORM_WEB_APP_NAME_OUTPUT
 output "webapp-name-output" {
-  value     = azurerm_app_service.sample-api.name
+  value     = azurerm_linux_web_app.sample-api.name
 }
