@@ -22,6 +22,7 @@ env:
   # FOR THE API
   API_ROOT_PATH: './api'      # set this to the path to your web app project, defaults to the repository root
   API_SLOT_NAME: 'Production'
+  API_STARTUP_COMMAND: 'npm run start:prop'
   TERRAFORM_SWA_API_KEY_OUTPUT: 'swa-api_key_output'
   
   # FOR THE WEB
@@ -126,6 +127,11 @@ jobs:
 
     steps:
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
+
       - uses: actions/checkout@v4
 
       - name: Setup terraform
@@ -149,11 +155,6 @@ jobs:
           npm run build --if-present
         working-directory: ${{ env.API_ROOT_PATH }}
 
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: '{"clientId":"${{ env.ARM_CLIENT_ID }}","clientSecret":"${{ env.ARM_CLIENT_SECRET }}","subscriptionId":"${{ env.ARM_SUBSCRIPTION_ID }}","tenantId":"${{ env.ARM_TENANT_ID }}"}'
-
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v2
@@ -161,3 +162,4 @@ jobs:
           app-name: ${{ steps.load-from-terraform.outputs.AZURE_WEB_APP_NAME }}
           slot-name: ${{ env.API_SLOT_NAME }}
           package: ${{ env.API_ROOT_PATH }}
+          startup-command: ${{ env.API_STARTUP_COMMAND }}
