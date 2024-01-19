@@ -22,7 +22,7 @@ env:
   # FOR THE API
   API_ROOT_PATH: './api'      # set this to the path to your web app project, defaults to the repository root
   API_SLOT_NAME: 'Production'
-  API_STARTUP_COMMAND: 'npm run start:prop'
+  API_STARTUP_COMMAND: 'npm run start:prod'
   TERRAFORM_SWA_API_KEY_OUTPUT: 'swa-api_key_output'
   
   # FOR THE WEB
